@@ -20,7 +20,7 @@ jobs:
 
       - name: Build Tag and push Docker Image
         env:
-          IMAGE_NAME: trial7crio3.jfrog.io/ghactions-docker/jfrog-docker-example-image:${{ github.run_number }}
+          IMAGE_NAME: elinaf.jfrog.io/edenb-docker-ci-docker/docker-example-image:${{ github.run_number }}
         run: |
           jf docker build -t $IMAGE_NAME .
           jf docker push $IMAGE_NAME
