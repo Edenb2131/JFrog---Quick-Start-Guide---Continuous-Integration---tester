@@ -34,7 +34,7 @@ jobs:
         run: |
           # Export the build name and build nuber
           # Collect environment variables for the build
-          jf rt bce $JFROG_CLI_BUILD_NAME $JFROG_CLI_BUILD_NUMBER
+          # jf rt bce $JFROG_CLI_BUILD_NAME $JFROG_CLI_BUILD_NUMBER
           
           # Collect VCS details from git and add them to the build
           jf rt bag $JFROG_CLI_BUILD_NAME $JFROG_CLI_BUILD_NUMBER
