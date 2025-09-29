@@ -1,0 +1,67 @@
+name: Build and Deploy Maven Artifacts to Artifactory
+
+on:
+  push:
+    branches:
+      - main  # Change to your preferred branch
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout code
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # Step 2: Set up JDK for Maven
+    - name: Set up JDK (for Maven)
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'  # Specify your Java version
+        distribution: 'adopt'
+
+    # Step 3: Set up JFrog CLI
+    - name: Set up JFrog CLI
+      uses: jfrog/setup-jfrog-cli@v4
+      with:
+        version: 2.75.0  # Specify the JFrog CLI version
+      env:
+        JF_URL: ${{ vars.JF_URL }}
+        JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
+
+    # Step 4: Configure Maven with JFrog CLI
+    - name: Configure Maven with JFrog CLI
+      run: |
+        jf mvnc --repo-deploy-releases=edenb-maven-ci-libs-release \
+                --repo-deploy-snapshots=edenb-maven-ci-libs-snapshot
+
+    # Step 5: Build and deploy Maven artifacts to Artifactory
+    - name: Build and deploy Maven artifacts
+      env:
+        JFROG_CLI_BUILD_NAME: edenb-mvn-build
+        JFROG_CLI_BUILD_NUMBER: ${{ github.run_number }}
+      run: |
+        jf mvn clean install \
+          --build-name=$JFROG_CLI_BUILD_NAME \
+          --build-number=$JFROG_CLI_BUILD_NUMBER
+
+    # Step 6: Run unit tests
+    - name: Run unit tests
+      run: mvn test
+
+
+   # Step 7: Publish Build Info with JFrog CLI
+    - name: Publish Build Info With JFrog CLI
+      env:
+        JFROG_CLI_BUILD_NAME: edenb-mvn-build
+        JFROG_CLI_BUILD_NUMBER: ${{ github.run_number }}
+      run: |
+        # Collect environment variables for the build
+        jf rt bce $JFROG_CLI_BUILD_NAME $JFROG_CLI_BUILD_NUMBER
+        
+        # Collect VCS details from git and add them to the build
+        jf rt bag $JFROG_CLI_BUILD_NAME $JFROG_CLI_BUILD_NUMBER
+        
+        # Publish build info
+        jf rt bp $JFROG_CLI_BUILD_NAME $JFROG_CLI_BUILD_NUMBER
