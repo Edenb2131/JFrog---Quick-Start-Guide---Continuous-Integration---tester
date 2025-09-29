@@ -24,14 +24,14 @@ jobs:
 
       - name: Build Tag and push Docker Image
         env:
-          IMAGE_NAME: elinaf.jfrog.io/edenb-docker-ci-docker/docker-example-image:${{ github.run_number }}
+          IMAGE_NAME: elinaf.jfrog.io/dev1-edenb-docker-virtual/docker-example-image:${{ github.run_number }}
         run: |
           jf docker build -t $IMAGE_NAME .
           jf docker push $IMAGE_NAME
 
       - name: Scan Docker Image for Vulnerabilities
         env:
-          IMAGE_NAME: elinaf.jfrog.io/edenb-docker-ci-docker/docker-example-image:${{ github.run_number }}
+          IMAGE_NAME: elinaf.jfrog.io/dev1-edenb-docker-virtual/docker-example-image:${{ github.run_number }}
         run: |
           jf docker scan $IMAGE_NAME
 
