@@ -26,8 +26,8 @@ jobs:
         env:
           IMAGE_NAME: elinaf.jfrog.io/dev1-edenb-docker-virtual/docker-example-image:${{ github.run_number }}
         run: |
-          jf docker build -t $IMAGE_NAME .
-          jf docker push $IMAGE_NAME
+          jf docker build -t $IMAGE_NAME . --project dev1
+          jf docker push $IMAGE_NAME --project dev1
 
       - name: Scan Docker Image for Vulnerabilities
         env:
@@ -40,6 +40,6 @@ jobs:
           JFROG_CLI_BUILD_NAME: jfrog-docker-build-example
           JFROG_CLI_BUILD_NUMBER : ${{ github.run_number }}
         run: |
-          jf rt bce $JFROG_CLI_BUILD_NAME $JFROG_CLI_BUILD_NUMBER
+          jf rt bce $JFROG_CLI_BUILD_NAME $JFROG_CLI_BUILD_NUMBER --project dev1
           jf rt bag $JFROG_CLI_BUILD_NAME $JFROG_CLI_BUILD_NUMBER
-          jf rt bp $JFROG_CLI_BUILD_NAME $JFROG_CLI_BUILD_NUMBER
+          jf rt bp $JFROG_CLI_BUILD_NAME $JFROG_CLI_BUILD_NUMBER --project dev1
